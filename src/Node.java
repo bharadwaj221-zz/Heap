@@ -1,12 +1,10 @@
-import java.util.LinkedList;
 
 
 public class Node {
 
 	int key;
 	public Node parent,child;
-	public LinkedList<Node> siblings;
-	
+	public Node sibling;
 	int degree;
 	public Node(int key) {
 		this.key=key;
