@@ -2,94 +2,6 @@ import java.io.*;
 
 class BinomialHeap extends Heap {
 
-	// class for modelling the node of a Binomial heap derived from Node class
-	public static class BinomialHeapNode extends Node{
-
-
-
-		private BinomialHeapNode parent; // pointer to the parent of the current node
-		private BinomialHeapNode sibling; // pointer to the next binomial tree in the list
-		private BinomialHeapNode child; // pointer to the first child of the current node
-
-		public BinomialHeapNode(int k) {
-			//	public BinomialHeapNode(Integer k) {
-			key = k;
-			degree = 0;
-			parent = null;
-			sibling = null;
-			child = null;
-		}
-
-		public int getKey() { // returns the element in the current node
-			return key;
-		}
-
-		public int getDegree() { // returns the degree of the current node
-			return degree;
-		}
-
-
-
-		public BinomialHeapNode getSibling() { // returns the next binomial tree in the list
-			return sibling;
-		}
-
-		public int getSize() {
-			return (1 + ((child == null) ? 0 : child.getSize()) + ((sibling == null) ? 0
-					: sibling.getSize()));
-		}
-
-		private BinomialHeapNode reverse(BinomialHeapNode sibl) {
-			BinomialHeapNode ret;
-			if (sibling != null)
-				ret = sibling.reverse(this);
-			else
-				ret = this;
-			sibling = sibl;
-			return ret;
-		}
-
-		private BinomialHeapNode findMinNode() {
-			BinomialHeapNode x = this, y = this;
-
-			int min = x.key;
-
-			while (x != null) {
-				if (x.key < min) {
-					y = x;
-					min = x.key;
-				}
-				x = x.sibling;
-			}
-
-			return y;
-		}
-
-		// Find a node with the given key
-		private BinomialHeapNode findANodeWithKey(int value) {
-			BinomialHeapNode temp = this, node = null;
-			while (temp != null) {
-				if (temp.key == value) {
-					node = temp;
-					break;
-				}
-				if (temp.child == null)
-					temp = temp.sibling;
-				else {
-					node = temp.child.findANodeWithKey(value);
-					if (node == null)
-						temp = temp.sibling;
-					else
-						break;
-				}
-			}
-
-			return node;
-		}
-
-	}
-
-
 	private BinomialHeapNode Nodes;
 	private int size;
 
@@ -278,7 +190,7 @@ class BinomialHeap extends Heap {
 
 	// 6. Decrease a key value
 	public void decrease(int old_value, int new_value) {
-		
+
 		BinomialHeapNode temp = Nodes.findANodeWithKey(old_value);
 		if (temp == null)
 		{	
@@ -287,10 +199,10 @@ class BinomialHeap extends Heap {
 		}
 		if(old_value < new_value)
 		{	System.out.println("new value is greater than old value. Cannot decrease..");
-			return;
+		return;
 		}
-		
-		
+
+
 		temp.key = new_value;
 		BinomialHeapNode tempParent = temp.parent;
 
@@ -314,9 +226,9 @@ class BinomialHeap extends Heap {
 		}
 		if(old_value > new_value)
 		{	System.out.println("new value is less than old value. Cannot increase..");
-			return;
+		return;
 		}
-		
+
 		temp.key = new_value;
 		BinomialHeapNode minChild;
 		while (temp!=null) {
@@ -347,33 +259,33 @@ class BinomialHeap extends Heap {
 	}
 
 	public void displayHeap(String filename) {
+
+		StringBuilder sbNodes=new StringBuilder("graph b {\n// Nodes\n");
+		StringBuilder sbEdges=new StringBuilder("// Edges\n");
+
+
+		BinomialHeapNode start=Nodes;
+		BinomialHeapNode node=start;
+
+		//display the root list
+		while(node!=null)
+		{
+			sbNodes.append(node.key+";\n");
+			if(node.sibling!=null)
+				sbEdges.append(node.key+" -- "+node.sibling.key+" [color=blue,style=dotted];\n");
+			node=node.sibling;
+		}
+		node=start;
+
+		//for each sibling scan its children and print them
+		while(node!=null)
+		{
+			traverse(node,sbNodes,sbEdges);
+			node=node.sibling;
+		}
+		sbEdges.append("}");
 		try {
-			StringBuilder sbNodes=new StringBuilder("graph b {\n// Nodes\n");
-			StringBuilder sbEdges=new StringBuilder("// Edges\n");
 			BufferedWriter writer=new BufferedWriter(new FileWriter(filename));
-
-			BinomialHeapNode start=Nodes;
-			BinomialHeapNode node=start;
-
-			//display the root list
-			while(node!=null)
-			{
-				sbNodes.append(node.key+";\n");
-				if(node.sibling!=null)
-					sbEdges.append(node.key+" -- "+node.sibling.key+" [color=blue,style=dotted];\n");
-				node=node.sibling;
-			}
-			node=start;
-
-			//for each sibling scan its children and print them
-			while(node!=null)
-			{
-				traverse(node,sbNodes,sbEdges);
-				node=node.sibling;
-			}
-			sbEdges.append("}");
-
-
 			writer.write(sbNodes.toString());
 			writer.write(sbEdges.toString());
 			writer.close();
@@ -383,7 +295,7 @@ class BinomialHeap extends Heap {
 		}
 
 	}
-	private void traverse(BinomialHeapNode node,StringBuilder sb1, StringBuilder sb2) throws IOException {
+	private void traverse(BinomialHeapNode node,StringBuilder sb1, StringBuilder sb2) {
 		BinomialHeapNode temp=node.child;
 		if(temp!=null)
 		{
@@ -402,6 +314,6 @@ class BinomialHeap extends Heap {
 		}
 
 	}
-	
+
 }
 // end of class BinomialHeap

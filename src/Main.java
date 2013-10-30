@@ -15,7 +15,7 @@ public class Main {
 		if(argv[0].equals("-binomial"))
 			h= new BinomialHeap();
 		else if(argv[0].equals("-binary"))
-			h=null;
+			h=new BinaryHeap(100);
 		else if(argv[0].equals("-fibonacci"))
 			h=null;
 		
@@ -45,8 +45,11 @@ public class Main {
 			{
 
 			case 1:
-				System.out.println("Enter integer element to insert");
-				h.insert(scan.nextInt());
+				//System.out.println("Enter integer element to insert");
+				//h.insert(scan.nextInt());
+				
+				for(int i=1;i<10;i++)
+					h.insert(i);
 
 				break;
 
