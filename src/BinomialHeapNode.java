@@ -5,9 +5,9 @@
 
 
 
-		public BinomialHeapNode parent; // pointer to the parent of the current node
-		public BinomialHeapNode sibling; // pointer to the next binomial tree in the list
-		public BinomialHeapNode child; // pointer to the first child of the current node
+		public BinomialHeapNode parent; 
+		public BinomialHeapNode sibling;
+		public BinomialHeapNode child; // first child of the current node
 
 		public BinomialHeapNode(int k) {
 			//	public BinomialHeapNode(Integer k) {
@@ -18,12 +18,14 @@
 			child = null;
 		}
 
-		
+		//size of the heap given size of the child + size of all siblings
 		public int getSize() {
 			return (1 + ((child == null) ? 0 : child.getSize()) + ((sibling == null) ? 0
 					: sibling.getSize()));
 		}
 
+		//reverse the linked list of siblings of a particular node
+		//used in
 		public BinomialHeapNode reverse(BinomialHeapNode sibl) {
 			BinomialHeapNode ret;
 			if (sibling != null)
@@ -34,6 +36,7 @@
 			return ret;
 		}
 
+		//find the minimum node by scanning the root list
 		public BinomialHeapNode findMinNode() {
 			BinomialHeapNode x = this, y = this;
 
@@ -50,7 +53,7 @@
 			return y;
 		}
 
-		// Find a node with the given key
+		//find a node in the heap with the given key
 		public BinomialHeapNode findANodeWithKey(int value) {
 			BinomialHeapNode temp = this, node = null;
 			while (temp != null) {

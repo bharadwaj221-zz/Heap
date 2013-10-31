@@ -8,21 +8,26 @@ public class Main {
 	public static void main(String[] argv) {
 
 		Scanner scan = new Scanner(System.in);
-		
+
 		// Make corresponding Heap based on the command
-		
-		Heap h=null;
-		if(argv[0].equals("-binomial"))
-			h= new BinomialHeap();
-		else if(argv[0].equals("-binary"))
-			h=new BinaryHeap(100);
-		else if(argv[0].equals("-fibonacci"))
-			h=null;
-		
+
+		Heap h = null;
+		try {
+			if (argv[0].equals("-binomial"))
+				h = new BinomialHeap();
+			else if (argv[0].equals("-binary"))
+				h = new BinaryHeap(100);
+			else if (argv[0].equals("-fibonacci"))
+				h = null;
+			else
+				System.out.println("Invalid command option..");
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("Specify the option\n(Format: Main -heap_type)");
+			System.exit(0);
+		}
 		char ch;
 		int oldKey, newKey;
-		
-		
+
 		// Perform Heap operations in a menu driven manner
 
 		do
@@ -45,11 +50,8 @@ public class Main {
 			{
 
 			case 1:
-				//System.out.println("Enter integer element to insert");
-				//h.insert(scan.nextInt());
-				
-				for(int i=1;i<10;i++)
-					h.insert(i);
+				System.out.println("Enter integer element to insert");
+				h.insert(scan.nextInt());
 
 				break;
 
@@ -81,8 +83,8 @@ public class Main {
 				break;
 
 			case 5:
-				int min=h.findMin();
-				if(min==-1)
+				int min = h.findMin();
+				if (min == -1)
 					System.out.println("Heap empty..");
 				else
 					System.out.println("Minimum element: " + min);
@@ -90,26 +92,24 @@ public class Main {
 				break;
 
 			case 6:
-				min=h.extractMin();
-				if(min==-1)
+				min = h.extractMin();
+				if (min == -1)
 					System.out.println("Heap empty..");
 				else
-					System.out.println("Minimum element extracted: "+ min);
+					System.out.println("Minimum element extracted: " + min);
 
 				break;
 
 			case 7:
 
 				h.displayHeap("output.gv");
-				File file=new File("output.gv");
+				File file = new File("output.gv");
 				try {
 					Desktop.getDesktop().open(file);
-				} 
-				catch (IOException e) {				
-					
+				} catch (IOException e) {
+
 				}
 				break;
-				
 
 			default:
 
