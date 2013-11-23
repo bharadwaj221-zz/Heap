@@ -21,20 +21,23 @@ public class BinaryHeap extends Heap {
 
 	}
 
+	// used in insertions and increase key operations
 	private void percUp(int j) {
 
 		int i, item;
 		i = j;
 		item = keys[j];
-		while (i > 1 && keys[i] < keys[i / 2]) {
+		while (i > 1 && item < keys[i / 2]) {
 			keys[i] = keys[i / 2];
 			i /= 2;
+			
 		}
 
 		keys[i] = item;
 
 	}
 
+	// used in delete and decrease key operations
 	private void percDown(int i) {
 		int min, temp;
 
@@ -74,7 +77,7 @@ public class BinaryHeap extends Heap {
 			keys[i] = keys[size];
 			keys[size] = -1;
 			size--;
-			percDown(1);
+			percDown(i);
 		}
 
 	}
@@ -96,8 +99,7 @@ public class BinaryHeap extends Heap {
 		return keys[1];
 	}
 
-	@Override
-	public void decrease(int old, int key) {
+	public void updateKey(int old, int key) {
 		int i;
 		for (i = 1; i <= size; i++)
 			if (old == keys[i])
@@ -106,31 +108,22 @@ public class BinaryHeap extends Heap {
 			System.out.println("Key not found..");
 			return;
 		}
-		if (old <= key) {
-			System.out
-					.println("new value is greater than old value. Cannot decrease..");
-			return;
-		}
+		if (old < key)
+			increase(old, key, i);
+		else if (old > key)
+			decrease(old, key, i);
+
+	}
+
+	public void decrease(int old, int key, int i) {
+
 		keys[i] = key;
 		percUp(i);
 
 	}
 
-	@Override
-	public void increase(int old, int key) {
-		int i;
-		for (i = 1; i <= size; i++)
-			if (old == keys[i])
-				break;
-		if (i > size) {
-			System.out.println("Key not found..");
-			return;
-		}
-		if (old >= key) {
-			System.out
-					.println("new value is less than old value. Cannot increase..");
-			return;
-		}
+	public void increase(int old, int key, int i) {
+
 		keys[i] = key;
 		percDown(i);
 

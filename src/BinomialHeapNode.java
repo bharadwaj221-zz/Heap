@@ -8,6 +8,7 @@
 		public BinomialHeapNode parent; 
 		public BinomialHeapNode sibling;
 		public BinomialHeapNode child; // first child of the current node
+		int degree; //number of children
 
 		public BinomialHeapNode(int k) {
 			//	public BinomialHeapNode(Integer k) {

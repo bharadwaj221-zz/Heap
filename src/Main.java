@@ -18,9 +18,9 @@ public class Main {
 			else if (argv[0].equals("-binary"))
 				h = new BinaryHeap(100);
 			else if (argv[0].equals("-fibonacci"))
-				h = null;
+				h = new FibonacciHeap();
 			else
-				System.out.println("Invalid command option..");
+				System.out.println("Invalid command option..\n(Format: Main -heap_type)");
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("Specify the option\n(Format: Main -heap_type)");
 			System.exit(0);
@@ -37,11 +37,10 @@ public class Main {
 			System.out.println("\nHeap Operations");
 			System.out.println("1. Insert ");
 			System.out.println("2. Delete ");
-			System.out.println("3. Increase key ");
-			System.out.println("4. Decrease key");
-			System.out.println("5. Find minimum element");
-			System.out.println("6. Extract minimum element");
-			System.out.println("7. Display heap");
+			System.out.println("3. Update key");
+			System.out.println("4. Find minimum element");
+			System.out.println("5. Extract minimum element");
+			System.out.println("6. Display heap");
 			System.out.println("Enter your choice: ");
 			int choice = scan.nextInt();
 
@@ -66,23 +65,13 @@ public class Main {
 
 				System.out.println("Enter old key");
 				oldKey = scan.nextInt();
-				System.out.println("Enter new increased key");
+				System.out.println("Enter new key");
 				newKey = scan.nextInt();
-				h.increase(oldKey, newKey);
+				h.updateKey(oldKey, newKey);
 
 				break;
 
 			case 4:
-
-				System.out.println("Enter old key");
-				oldKey = scan.nextInt();
-				System.out.println("Enter new decreased key");
-				newKey = scan.nextInt();
-				h.decrease(oldKey, newKey);
-
-				break;
-
-			case 5:
 				int min = h.findMin();
 				if (min == -1)
 					System.out.println("Heap empty..");
@@ -91,7 +80,7 @@ public class Main {
 
 				break;
 
-			case 6:
+			case 5:
 				min = h.extractMin();
 				if (min == -1)
 					System.out.println("Heap empty..");
@@ -100,7 +89,7 @@ public class Main {
 
 				break;
 
-			case 7:
+			case 6:
 
 				h.displayHeap("output.gv");
 				File file = new File("output.gv");

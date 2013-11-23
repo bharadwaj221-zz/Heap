@@ -2,7 +2,7 @@ import java.io.*;
 
 class BinomialHeap extends Heap {
 
-	private BinomialHeapNode Nodes;
+	private BinomialHeapNode rootNode;
 	private int size;
 
 	public int getSize() {
@@ -14,15 +14,15 @@ class BinomialHeap extends Heap {
 	}
 
 	public BinomialHeap() {
-		Nodes = null;
+		rootNode = null;
 		setSize(0);
 	}
 
 	// find the minimum key
 	public int findMin() {
-		if (Nodes == null)
+		if (rootNode == null)
 			return -1;
-		BinomialHeapNode minNode = Nodes.findMinNode();
+		BinomialHeapNode minNode = rootNode.findMinNode();
 		if (minNode == null)
 			return -1;
 		return minNode.key;
@@ -32,7 +32,7 @@ class BinomialHeap extends Heap {
 	private void union(BinomialHeapNode binHeap) {
 		merge(binHeap);
 
-		BinomialHeapNode prevTemp = null, temp = Nodes, nextTemp = Nodes.sibling;
+		BinomialHeapNode prevTemp = null, temp = rootNode, nextTemp = rootNode.sibling;
 
 		while (nextTemp != null) {
 			if ((temp.degree != nextTemp.degree)
@@ -51,7 +51,7 @@ class BinomialHeap extends Heap {
 				} else {
 					if (prevTemp == null) {
 
-						Nodes = nextTemp;
+						rootNode = nextTemp;
 					} else {
 
 						prevTemp.sibling = nextTemp;
@@ -70,7 +70,7 @@ class BinomialHeap extends Heap {
 
 	//
 	private void merge(BinomialHeapNode binHeap) {
-		BinomialHeapNode node1 = Nodes, node2 = binHeap;
+		BinomialHeapNode node1 = rootNode, node2 = binHeap;
 		while ((node1 != null) && (node2 != null)) {
 			if (node1.degree == node2.degree) {
 
@@ -98,9 +98,9 @@ class BinomialHeap extends Heap {
 					node1 = node2;
 					node2 = node2.sibling;
 					node1.sibling = temp;
-					if (temp == Nodes) {
+					if (temp == rootNode) {
 
-						Nodes = node1;
+						rootNode = node1;
 					} else {
 
 					}
@@ -109,7 +109,7 @@ class BinomialHeap extends Heap {
 		}
 
 		if (node1 == null) {
-			node1 = Nodes;
+			node1 = rootNode;
 			while (node1.sibling != null) {
 
 				node1 = node1.sibling;
@@ -124,8 +124,8 @@ class BinomialHeap extends Heap {
 	public void insert(int value) {
 		if (value > 0) {
 			BinomialHeapNode temp = new BinomialHeapNode(value);
-			if (Nodes == null) {
-				Nodes = temp;
+			if (rootNode == null) {
+				rootNode = temp;
 				setSize(1);
 			} else {
 				union(temp);
@@ -136,11 +136,11 @@ class BinomialHeap extends Heap {
 
 	// extract the node with the minimum key
 	public int extractMin() {
-		if (Nodes == null)
+		if (rootNode == null)
 			return -1;
 
-		BinomialHeapNode temp = Nodes, prev = null;
-		BinomialHeapNode minNode = Nodes.findMinNode();
+		BinomialHeapNode temp = rootNode, prev = null;
+		BinomialHeapNode minNode = rootNode.findMinNode();
 		while (temp.key != minNode.key) {
 
 			prev = temp;
@@ -149,35 +149,35 @@ class BinomialHeap extends Heap {
 
 		if (prev == null) {
 
-			Nodes = temp.sibling;
+			rootNode = temp.sibling;
 		} else {
 
 			prev.sibling = temp.sibling;
 		}
 		temp = temp.child;
-		BinomialHeapNode fakeNode = temp;
+		BinomialHeapNode other = temp;
 		while (temp != null) {
 
 			temp.parent = null;
 			temp = temp.sibling;
 		}
 
-		if ((Nodes == null) && (fakeNode == null)) {
+		if ((rootNode == null) && (other == null)) {
 
 			setSize(0);
 		} else {
-			if ((Nodes == null) && (fakeNode != null)) {
+			if ((rootNode == null) && (other != null)) {
 
-				Nodes = fakeNode.reverse(null);
-				setSize(Nodes.getSize());
+				rootNode = other.reverse(null);
+				setSize(rootNode.getSize());
 			} else {
-				if ((Nodes != null) && (fakeNode == null)) {
+				if ((rootNode != null) && (other == null)) {
 
-					setSize(Nodes.getSize());
+					setSize(rootNode.getSize());
 				} else {
 
-					union(fakeNode.reverse(null));
-					setSize(Nodes.getSize());
+					union(other.reverse(null));
+					setSize(rootNode.getSize());
 				}
 			}
 		}
@@ -185,50 +185,44 @@ class BinomialHeap extends Heap {
 		return minNode.key;
 	}
 
+	//update a key
+	public void updateKey(int old_value, int new_value) {
+
+		BinomialHeapNode node = rootNode.findANodeWithKey(old_value);
+		if (node == null) {
+			System.out.println("Key not found..");
+			return;
+		}
+		if (old_value < new_value) 
+			increase(old_value,new_value,node);
+		else
+			decrease(old_value, new_value,node);
+	}
+
 	// decrease a key value
-	public void decrease(int old_value, int new_value) {
+	public void decrease(int old_value, int new_value, BinomialHeapNode node) {
 
-		BinomialHeapNode temp = Nodes.findANodeWithKey(old_value);
-		if (temp == null) {
-			System.out.println("Old key not found..");
-			return;
-		}
-		if (old_value < new_value) {
-			System.out
-					.println("new value is greater than old value. Cannot decrease..");
-			return;
-		}
+		node.key = new_value;
+		BinomialHeapNode tempParent = node.parent;
 
-		temp.key = new_value;
-		BinomialHeapNode tempParent = temp.parent;
-
-		while ((tempParent != null) && (temp.key < tempParent.key)) {
-			int z = temp.key;
-			temp.key = tempParent.key;
+		while ((tempParent != null) && (node.key < tempParent.key)) {
+			int z = node.key;
+			node.key = tempParent.key;
 			tempParent.key = z;
 
-			temp = tempParent;
+			node = tempParent;
 			tempParent = tempParent.parent;
 		}
 	}
 
 	// Increase a key value
-	public void increase(int old_value, int new_value) {
-		BinomialHeapNode temp = Nodes.findANodeWithKey(old_value);
-		if (temp == null) {
-			System.out.println("Old key not found..");
-			return;
-		}
-		if (old_value > new_value) {
-			System.out
-					.println("new value is less than old value. Cannot increase..");
-			return;
-		}
+	public void increase(int old_value, int new_value, BinomialHeapNode node) {
 
-		temp.key = new_value;
+
+		node.key = new_value;
 		BinomialHeapNode minChild;
-		while (temp != null) {
-			minChild = temp.child;
+		while (node != null) {
+			minChild = node.child;
 			if (minChild == null)
 				break;
 			BinomialHeapNode sib = minChild.sibling;
@@ -237,11 +231,11 @@ class BinomialHeap extends Heap {
 					minChild = sib;
 				sib = sib.sibling;
 			}
-			int tempVal = temp.key;
-			if (minChild.key < temp.key) {
-				temp.key = minChild.key;
+			int tempVal = node.key;
+			if (minChild.key < node.key) {
+				node.key = minChild.key;
 				minChild.key = tempVal;
-				temp = minChild;
+				node = minChild;
 			} else
 				break;
 		}
@@ -249,8 +243,8 @@ class BinomialHeap extends Heap {
 
 	// delete a node with a certain key
 	public void delete(int value) {
-		if ((Nodes != null) && (Nodes.findANodeWithKey(value) != null)) {
-			decrease(value, findMin() - 1);
+		if ((rootNode != null) && (rootNode.findANodeWithKey(value) != null)) {
+			updateKey(value, findMin() - 1);
 			extractMin();
 		}
 	}
@@ -258,17 +252,17 @@ class BinomialHeap extends Heap {
 	// write the heap in DOT format to a .gv file
 	public void displayHeap(String filename) {
 
-		StringBuilder sbNodes = new StringBuilder("graph b {\n// Nodes\n");
+		StringBuilder sbNodes = new StringBuilder("digraph g {\n// Nodes\n");
 		StringBuilder sbEdges = new StringBuilder("// Edges\n");
 
-		BinomialHeapNode start = Nodes;
+		BinomialHeapNode start = rootNode;
 		BinomialHeapNode node = start;
 
 		// display the root list
 		while (node != null) {
 			sbNodes.append(node.key + ";\n");
 			if (node.sibling != null)
-				sbEdges.append(node.key + " -- " + node.sibling.key
+				sbEdges.append(node.key + " -> " + node.sibling.key
 						+ " [color=blue,style=dotted];\n");
 			node = node.sibling;
 		}
@@ -298,13 +292,13 @@ class BinomialHeap extends Heap {
 		BinomialHeapNode temp = node.child;
 		if (temp != null) {
 			sb1.append(temp.key + ";\n");
-			sb2.append(node.key + " -- " + temp.key
+			sb2.append(node.key + " -> " + temp.key
 					+ " [color=black,style=null];\n");
 			traverse(temp, sb1, sb2);
 			temp = temp.sibling;
 			while (temp != null) {
 				sb1.append(temp.key + ";\n");
-				sb2.append(node.key + " -- " + temp.key
+				sb2.append(node.key + " -> " + temp.key
 						+ " [color=black,style=null];\n");
 				traverse(temp, sb1, sb2);
 				temp = temp.sibling;

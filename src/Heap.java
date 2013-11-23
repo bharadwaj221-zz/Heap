@@ -11,7 +11,7 @@ public abstract class Heap {
 	public abstract void delete(int key);
 	public abstract int extractMin();
 	public abstract int findMin();
-	public abstract void decrease(int old,int key);
-	public abstract void increase(int old,int key);
+	public abstract void updateKey(int old,int key);
+	
 	public abstract void displayHeap(String filename);
 }
